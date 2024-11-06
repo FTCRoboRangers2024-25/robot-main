@@ -12,21 +12,20 @@ import java.util.HashSet;
 public abstract class OpModeBase extends LinearOpMode {
     private final HashSet<Component> components = new HashSet<>();
 
-    private final IMessageBroadcaster messageBroadcaster = new StandardMessageBroadcaster();
+    private final IMessageBroadcaster messageBroadcaster = new StandardMessageBroadcaster(telemetry);
 
     public abstract void startup();
-
-    private void initializeComponents() {
-        for (Component component : components) {
-            component.init();
-        }
-    }
 
     @Override
     public void runOpMode() {
         startup();
 
-        initializeComponents();
+        for (Component component : components) {
+            component.addDependencies(hardwareMap, telemetry, messageBroadcaster);
+            component.init();
+        }
+
+        messageBroadcaster.addReceiverRange(new HashSet<>(components));
 
         waitForStart();
 
@@ -41,18 +40,18 @@ public abstract class OpModeBase extends LinearOpMode {
         }
     }
 
-    protected <T> void addComponent(Class<T> clazz) {
+    protected <T> void addComponent(Class<T> componentClass) {
         try {
-            //TODO: clean this stuff up, somehow automatically supply the constructor arguments for more flexibility
-            Constructor<?> constructor = clazz.getConstructor(HardwareMap.class, Telemetry.class, IMessageBroadcaster.class);
-            Object createdComponent = constructor.newInstance(hardwareMap, telemetry, messageBroadcaster);
+            Constructor<?> constructor = componentClass.getConstructor();
+            Object createdComponent = constructor.newInstance();
 
             Component castedComponent = (Component)createdComponent;
             components.add(castedComponent);
         } catch (Exception e) {
-            //TODO: more feedback for drivers so in case something happens during a match, they can spot it very quickly
-            telemetry.addLine("Something went wrong when instantiating " + clazz.getName());
+            telemetry.addLine("Something went wrong when instantiating " + componentClass.getName());
             telemetry.update();
+
+            requestOpModeStop();
         }
     }
 }

@@ -7,10 +7,6 @@ import org.firstinspires.ftc.teamcode.utilities.Component;
 import org.firstinspires.ftc.teamcode.utilities.IMessageBroadcaster;
 
 public class SampleComponent extends Component {
-    public SampleComponent(HardwareMap hardwareMap, Telemetry telemetry, IMessageBroadcaster messageBroadcaster) {
-        super(hardwareMap, telemetry, messageBroadcaster);
-    }
-
     @Override
     public void init() {
     }

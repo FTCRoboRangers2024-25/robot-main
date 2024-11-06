@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public abstract class Component {
-    protected final HardwareMap hardwareMap;
-    protected final Telemetry telemetry;
+    protected HardwareMap hardwareMap;
+    protected Telemetry telemetry;
 
-    private final IMessageBroadcaster messageBroadcaster;
+    private IMessageBroadcaster messageBroadcaster;
 
-    public Component(HardwareMap hardwareMap, Telemetry telemetry, IMessageBroadcaster messageBroadcaster) {
+    public void addDependencies(HardwareMap hardwareMap, Telemetry telemetry, IMessageBroadcaster messageBroadcaster) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.messageBroadcaster = messageBroadcaster;
